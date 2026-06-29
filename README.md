@@ -1,6 +1,8 @@
 # fcitx5-hangul-debug
 
 基于 [fcitx5-android](https://github.com/fcitx5-android/fcitx5-android) 的韩语输入法键盘显示修复版本。
+## 说明
+自用，使用vibe coding创建，基础功能正常，韩语键盘状态下，长摁无法显示键盘上的符号。
 
 ## 问题
 
