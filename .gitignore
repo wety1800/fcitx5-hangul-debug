@@ -26,6 +26,8 @@
 # Android.gitignore
 # Built application files
 *.apk
+!fcitx5-hangul.apk
+!fcitx5-hangul-voice.apk
 *.aar
 *.ap_
 *.aab
