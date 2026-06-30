@@ -61,25 +61,24 @@ jobs:
       - name: List build outputs
         run: |
           echo "=== Listing APK build outputs ==="
-          find app/build/outputs -name "*.apk" -type f 2>/dev/null || true
-          find . -name "*.apk" -type f 2>/dev/null | head -20
+          find . -name "*.apk" -type f 2>/dev/null
 
       - name: Rename APK
         run: |
-          # 找到所有 APK 文件并重命名
-          find app/build/outputs/apk -name "*.apk" -type f | while read apk; do
-            dir=$(dirname "$apk")
-            newname="fcitx5-android-arm64-v8a-${{ steps.commit_info.outputs.timestamp }}-${{ steps.commit_info.outputs.short_sha }}.apk"
-            mv "$apk" "$dir/$newname"
-            echo "Renamed: $apk -> $dir/$newname"
-          done
+          APK=$(find . -name "*.apk" -type f 2>/dev/null | head -1)
+          if [ -n "$APK" ]; then
+            dir=$(dirname "$APK")
+            newname="fcitx5-hangul-arm64-v8a-${{ steps.commit_info.outputs.timestamp }}-${{ steps.commit_info.outputs.short_sha }}.apk"
+            mv "$APK" "$dir/$newname"
+            echo "Renamed: $APK -> $dir/$newname"
+          else
+            echo "No APK found"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v5
         with:
-          name: fcitx5-android-arm64-v8a-${{ steps.commit_info.outputs.short_sha }}
-          path: |
-            app/build/outputs/**/*.apk
-            app/build/outputs/apk/**/*.apk
+          name: fcitx5-hangul-arm64-v8a-${{ steps.commit_info.outputs.short_sha }}
+          path: "**/*.apk"
           if-no-files-found: warn
           retention-days: 30
