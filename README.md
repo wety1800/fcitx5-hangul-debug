@@ -41,10 +41,6 @@ Z  X  C  V  B  N  M                ㅋ  ㅌ  ㅊ  ㅍ  ㅠ  ㅜ  ㅡ
 | O | ㅐ | ㅒ | 复合元音 |
 | P | ㅔ | ㅖ | 复合元音 |
 
-### 3. 插件识别修复（plugin-base/AndroidManifest.xml）
-
-修复 debug 版本无法识别插件的问题：将 intent-filter action 从硬编码改为使用 `${mainApplicationId}` 占位符，适配 debug 构建的应用 ID 后缀。
-
 ## 构建环境
 
 - JDK 17
@@ -68,22 +64,9 @@ export ANDROID_HOME=/path/to/android-sdk
 ./gradlew assembleDebug
 ```
 
-## 安装
-
-需要安装两个 APK：
-
-```bash
-# 安装主应用
-adb install app/build/outputs/apk/debug/*-arm64-v8a-debug.apk
-
-# 安装韩语插件
-adb install plugin/hangul/build/outputs/apk/debug/*-arm64-v8a-debug.apk
-```
-
 ## 文件修改说明
 
 | 文件 | 说明 |
 |------|------|
 | `app/.../keyboard/TextKeyboard.kt` | 韩语键盘显示核心逻辑 |
 | `app/.../popup/PopupPreset.kt` | 韩语紧辅音长按弹出 |
-| `lib/plugin-base/.../AndroidManifest.xml` | 插件 intent 占位符修复 |
