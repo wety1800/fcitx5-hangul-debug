@@ -211,22 +211,17 @@ class TextKeyboard(
             is PopupAction.PreviewAction -> action.copy(content = transformPopupPreview(action.content))
             is PopupAction.PreviewUpdateAction -> action.copy(content = transformPopupPreview(action.content))
             is PopupAction.ShowKeyboardAction -> {
-                when (action.keyboard) {
-                    is KeyDef.Popup.Keyboard.Preset -> {
-                        val label = action.keyboard.label
-                        if (label.length == 1 && label[0].isLetter()) {
-                            val transformedLabel = if (isHangulMode) {
-                                hangulKeyMap[label.uppercase()] ?: label
-                            } else {
-                                transformAlphabet(label)
-                            }
-                            action.copy(
-                                keyboard = action.keyboard.copy(label = transformedLabel)
-                            )
-                        } else action
+                val label = action.keyboard.label
+                if (label.length == 1 && label[0].isLetter()) {
+                    val transformedLabel = if (isHangulMode) {
+                        hangulKeyMap[label.uppercase()] ?: label
+                    } else {
+                        transformAlphabet(label)
                     }
-                    is KeyDef.Popup.Keyboard.Explicit -> action
-                }
+                    action.copy(
+                        keyboard = KeyDef.Popup.Keyboard(transformedLabel)
+                    )
+                } else action
             }
             else -> action
         }
