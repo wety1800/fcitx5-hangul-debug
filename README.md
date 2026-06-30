@@ -1,89 +1,54 @@
-# fcitx5-hangul-debug
+# Fcitx5 for Android - Hangul Edition
 
-基于 [fcitx5-android](https://github.com/fcitx5-android/fcitx5-android) 的韩语输入法键盘显示修复版本。
+基于 [fcitx5-android](https://github.com/fcitx5-android/fcitx5-android) 的自定义版本，主要修改：
 
-## 问题
+- 移除 debug 构建的 `applicationIdSuffix`，使 debug 版本与官方 release 使用相同的 `applicationId`
+- 修复第三方插件（如 Fcitx5-SyncClipboard）无法识别的问题
+- 支持韩语（Hangul）键盘显示
 
-原版 fcitx5-android 的韩语(hangul)输入插件可以正常输入韩语文字，但虚拟键盘界面上始终显示英文字母，无法直观地展示韩语字符布局，对韩语初学者不友好。
+## 文件说明
 
-## 修复内容
+| 目录/文件 | 说明 |
+|-----------|------|
+| `app/` | 主应用模块 |
+| `build-logic/` | 构建逻辑插件（已修改 applicationId 相关配置） |
+| `lib/common/` | 公共库（IPC 通信等） |
+| `lib/fcitx5/` | Fcitx5 核心库 |
+| `lib/fcitx5-lua/` | Lua 插件支持 |
+| `lib/fcitx5-chinese-addons/` | 中文输入法附加组件 |
+| `lib/libime/` | IME 核心库 |
+| `lib/plugin-base/` | 插件基础库 |
+| `plugin/anthy/` | 日语输入法插件 |
+| `plugin/chewing/` | 注音输入法插件 |
+| `plugin/clipboard-filter/` | 剪贴板过滤插件 |
+| `plugin/jyutping/` | 粤语拼音插件 |
+| `plugin/rime/` | Rime 输入法插件 |
+| `plugin/sayura/` | 僧伽罗语输入法插件 |
+| `plugin/thai/` | 泰语输入法插件 |
+| `plugin/unikey/` | 越南语输入法插件 |
 
-### 1. 韩语键盘显示 (`TextKeyboard.kt`)
+## 韩语插件
 
-启用韩语输入法后，键盘自动切换为韩语二式(Dubeolsik)布局显示：
+韩语（Hangul）插件请从官方版本下载：
 
-```
-英语模式:                韩语模式:
-Q  W  E  R  T  Y  U  I  O  P     ㅂ  ㅈ  ㄷ  ㄱ  ㅅ  ㅛ  ㅕ  ㅑ  ㅐ  ㅔ
-  A  S  D  F  G  H  J  K  L        ㅁ  ㄴ  ㅇ  ㄹ  ㅎ  ㅗ  ㅓ  ㅏ  ㅣ
-Z  X  C  V  B  N  M                ㅋ  ㅌ  ㅊ  ㅍ  ㅠ  ㅜ  ㅡ
-```
+**官方韩语插件下载地址：**
+https://github.com/fcitx5-android/fcitx5-android/releases/latest
 
-- 通过 `ime.languageCode == "ko"` 自动检测韩语输入法
-- 切换回其他输入法时自动恢复英文键盘显示
-- 韩语模式下按键始终发送小写英文字母（韩语引擎需要 QWERTY 键码）
+选择对应架构的 `org.fcitx.fcitx5.android.plugin.hangul-*-release.apk` 安装即可。
 
-### 2. 长按弹出紧辅音 (`PopupPreset.kt`)
-
-支持长按弹出韩语紧辅音(双声母)和复合元音：
-
-| 按键 | 显示 | 长按弹出 | 说明 |
-|------|------|----------|------|
-| R | ㄱ | ㄲ | 双kiyeok |
-| E | ㄷ | ㄸ | 双digeut |
-| Q | ㅂ | ㅃ | 双bieup |
-| T | ㅅ | ㅆ | 双siot |
-| W | ㅈ | ㅉ | 双jieut |
-| O | ㅐ | ㅒ | 复合元音 |
-| P | ㅔ | ㅖ | 复合元音 |
-
-### 3. 插件识别修复 (`plugin-base/AndroidManifest.xml`)
-
-修复 debug 版本无法识别插件的问题：将 intent-filter action 从硬编码改为使用 `${mainApplicationId}` 占位符，适配 debug 构建的应用 ID 后缀。
-
-## 构建环境
-
-- JDK 17
-- Android SDK (compileSdk 36)
-- NDK 28.0.13004108
-- CMake 3.31.6
-- MSYS2 (用于 Gettext)
-
-## 构建方法
+## 构建说明
 
 ```bash
-git clone https://github.com/wety1800/fcitx5-hangul-debug.git
-cd fcitx5-hangul-debug
-git submodule update --init --recursive
+# 设置 Android SDK 路径
+export ANDROID_HOME=/path/to/android/sdk
 
-# 设置环境变量
-export JAVA_HOME=/path/to/jdk17
-export ANDROID_HOME=/path/to/android-sdk
-
-# 编译
-./gradlew assembleDebug
+# 编译 debug 版本（仅 arm64-v8a）
+./gradlew :app:assembleDebug
 ```
 
-## 安装
+## 更新日志
 
-需要安装两个 APK：
-
-```bash
-# 安装主应用
-adb install app/build/outputs/apk/debug/*-arm64-v8a-debug.apk
-
-# 安装韩语插件
-adb install plugin/hangul/build/outputs/apk/debug/*-arm64-v8a-debug.apk
-```
-
-## 文件修改说明
-
-| 文件 | 说明 |
-|------|------|
-| `app/.../keyboard/TextKeyboard.kt` | 韩语键盘显示核心逻辑 |
-| `app/.../popup/PopupPreset.kt` | 韩语紧辅音长按弹出 |
-| `lib/plugin-base/.../AndroidManifest.xml` | 插件 intent 占位符修复 |
-
-## 许可证
-
-基于 fcitx5-android 项目，遵循 LGPL-2.1-or-later 许可证。
+### 2026-06-30
+- 移除 debug 构建的 `applicationIdSuffix = ".debug"`，修复第三方插件无法识别的问题
+- 更新 `MAIN_APPLICATION_ID` 配置，使 debug 版本使用 `org.fcitx.fcitx5.android`（与官方一致）
+- 添加 `NativeBuildTasks.kt` 的异常处理，容忍 Windows 环境下缺少 Gettext 工具的构建错误
