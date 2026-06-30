@@ -47,8 +47,8 @@ if(NOT IS_DIRECTORY "${_BOOST_ABI_INCLUDE}")
 endif()
 
 # prebuilt marisa-tire, OpenCC needs it
-set(marisa_DIR "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib/cmake/Marisa")
-find_package(marisa REQUIRED)
+set(Marisa_DIR "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib/cmake/Marisa")
+find_package(Marisa REQUIRED)
 
 # prebuilt opencc
 set(OpenCC_DIR "${PREBUILT_DIR}/opencc/${ANDROID_ABI}/lib/cmake/opencc")
