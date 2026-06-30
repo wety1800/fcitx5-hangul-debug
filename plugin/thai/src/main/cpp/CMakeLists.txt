@@ -24,4 +24,5 @@ set_target_properties(Thai_static PROPERTIES
         )
 
 set(THAI_TARGET Thai_static)
+option(ENABLE_TEST "" OFF)
 add_subdirectory(fcitx5-libthai)
