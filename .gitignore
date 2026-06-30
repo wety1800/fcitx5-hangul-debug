@@ -9,6 +9,8 @@
 /plugin/*/src/main/assets/usr/
 # Generated asset descriptor
 /plugin/*/src/main/assets/descriptor.json
+# Hangul plugin (use official version)
+/plugin/hangul/
 
 # Intellij
 .idea/*

@@ -7,10 +7,14 @@ package org.fcitx.fcitx5.android.input.keyboard
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.transition.Slide
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import org.fcitx.fcitx5.android.R
 import org.fcitx.fcitx5.android.core.CapabilityFlags
 import org.fcitx.fcitx5.android.core.InputMethodEntry
@@ -73,6 +77,8 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     }
     private var currentKeyboardName = ""
     private var lastSymbolType: String by AppPrefs.getInstance().internal.lastSymbolLayout
+    private var voiceOverlay: FrameLayout? = null
+    private var voiceWave: org.fcitx.fcitx5.android.input.voice.WaveformView? = null
 
     private val currentKeyboard: BaseKeyboard? get() = keyboards[currentKeyboardName]
 
@@ -169,6 +175,7 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     }
 
     override fun onDetached() {
+        hideVoiceOverlay()
         currentKeyboard?.let {
             it.onDetach()
             it.keyActionListener = null
@@ -182,5 +189,63 @@ class KeyboardWindow : InputWindow.SimpleInputWindow<KeyboardWindow>(), Essentia
     // 2) currently keyboard window is attached and switchLayout was used
     private fun notifyBarLayoutChanged() {
         bar.onKeyboardLayoutSwitched(currentKeyboardName == NumberKeyboard.Name)
+    }
+
+    fun showVoiceOverlay() {
+        if (voiceOverlay != null) return
+        val bgColor = when (val t = theme) {
+            is org.fcitx.fcitx5.android.data.theme.Theme.Builtin -> t.keyboardColor
+            else -> theme.backgroundColor
+        }
+        val overlay = FrameLayout(context).apply {
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundColor(bgColor)
+            isClickable = false; isFocusable = false
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        val wave = org.fcitx.fcitx5.android.input.voice.WaveformView(context).apply {
+            val candidateColors = listOf(
+                theme.genericActiveForegroundColor,
+                theme.accentKeyBackgroundColor,
+                theme.keyTextColor
+            )
+            val lineColor = candidateColors.firstOrNull {
+                ColorUtils.calculateContrast(it, bgColor) >= 2.5
+            } ?: theme.genericActiveForegroundColor
+            setWaveformColor(lineColor)
+            visibility = View.INVISIBLE
+        }
+        overlay.addView(wave, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        val ts = androidx.transition.TransitionSet().apply {
+            addTransition(Slide(Gravity.BOTTOM).apply { addTarget(overlay) })
+            duration = 100
+        }
+        TransitionManager.beginDelayedTransition(keyboardView, ts)
+        keyboardView.addView(overlay)
+        voiceOverlay = overlay
+        voiceWave = wave
+    }
+
+    fun startVoiceOverlayWave() {
+        val wave = voiceWave ?: return
+        wave.visibility = View.VISIBLE
+        wave.start()
+    }
+
+    fun hideVoiceOverlay() {
+        val overlay = voiceOverlay ?: return
+        try { voiceWave?.stop() } catch (_: Throwable) {}
+        val ts = androidx.transition.TransitionSet().apply {
+            addTransition(Slide(Gravity.BOTTOM).apply { addTarget(overlay) })
+            duration = 100
+        }
+        TransitionManager.beginDelayedTransition(keyboardView, ts)
+        keyboardView.removeView(overlay)
+        voiceOverlay = null
+        voiceWave = null
+    }
+
+    fun updateVoiceOverlayAmplitude(amplitude: Float) {
+        voiceWave?.updateAmplitude(amplitude)
     }
 }

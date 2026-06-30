@@ -291,6 +291,8 @@
     <string name="expand_candidates_list">展开候选词列表</string>
     <string name="hide_candidates_list">隐藏</string>
     <string name="switch_to_voice_input">切换到语音输入</string>
+    <string name="voice_input_tap_to_stop">使用点按控制语音输入</string>
+    <string name="space_behavior_voice_input">语音输入（AIDL）</string>
     <string name="hide_keyboard">隐藏键盘</string>
     <string name="private_mode">隐私模式（点击以切换工具栏）</string>
     <string name="hide_toolbar">隐藏工具栏</string>
@@ -317,4 +319,10 @@
     <string name="hide_unsupported_emojis">隐藏不支持的表情</string>
     <string name="key_border_stroke">启用按键边框描边</string>
     <string name="preferred_voice_input">首选语音输入</string>
+    <string name="asrkb_err_busy">语音服务正忙，请稍后再试。</string>
+    <string name="asrkb_err_feature_disabled">请先在言犀中开启"允许外部输入法联动（AIDL）"。</string>
+    <string name="asrkb_client_need_mic_permission">小企鹅需要麦克风权限以进行语音输入。</string>
+    <string name="asrkb_err_audio_record_failed">音频录制初始化失败，麦克风可能被其他应用占用。</string>
+    <string name="asrkb_err_start_failed_with_code">启动会话失败（错误码 %1$d）</string>
+    <string name="asrkb_err_service_error_with_code">语音服务错误（错误码 %1$d）</string>
 </resources>
