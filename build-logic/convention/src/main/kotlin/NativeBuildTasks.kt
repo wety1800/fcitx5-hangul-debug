@@ -69,6 +69,10 @@ abstract class CMakeBuildInstallTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
+        if (!cxxAbiModel.isPresent) {
+            logger.warn("cxxAbiModel not available, skipping task")
+            return
+        }
         val cxxAbiModel = this.cxxAbiModel.get()
         val buildTarget = this.buildTarget.getOrElse("")
         val installComponent = this.installComponent.getOrElse("")
