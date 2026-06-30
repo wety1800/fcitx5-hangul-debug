@@ -1,12 +1,14 @@
 name: Publish
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'build-logic/**'
-      - 'lib/**'
-      - '.github/workflows/publish.yml'
+  workflow_dispatch:
+  # Disabled - publish to fcitx5-android/fcitx5-android is not available for forks
+  # push:
+  #   branches: [master]
+  #   paths:
+  #     - 'build-logic/**'
+  #     - 'lib/**'
+  #     - '.github/workflows/publish.yml'
 
 jobs:
   publish:

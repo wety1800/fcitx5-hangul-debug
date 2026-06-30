@@ -14,6 +14,8 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+      - name: Init nested submodules
+        run: git submodule update --init --recursive
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
