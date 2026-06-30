@@ -43,6 +43,7 @@ add_library(PkgConfig::ZSTD ALIAS zstd::libzstd_static)
 
 set(LIBIME_INSTALL_PKGDATADIR table)
 option(ENABLE_TEST "" OFF)
+set(ENABLE_TOOLS OFF CACHE BOOL "" FORCE)
 add_subdirectory(libime)
 # kenlm/util/exception.hh uses __FILE__ macro
 target_compile_options(kenlm PRIVATE "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}/libime/src/libime/core/kenlm=.")
