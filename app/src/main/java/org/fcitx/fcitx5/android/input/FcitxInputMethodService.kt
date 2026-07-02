@@ -95,6 +95,7 @@ class FcitxInputMethodService : LifecycleInputMethodService() {
     private var lastMetaState: Int = 0
 
     private lateinit var pkgNameCache: PackageNameCache
+    private lateinit var perAppImeManager: PerAppImeManager
 
     private lateinit var decorView: View
     private lateinit var contentView: FrameLayout
@@ -212,6 +213,7 @@ class FcitxInputMethodService : LifecycleInputMethodService() {
             }
         }
         pkgNameCache = PackageNameCache(this)
+        perAppImeManager = PerAppImeManager(this)
         recreateInputViewPrefs.forEach {
             it.registerOnChangeListener(recreateInputViewListener)
         }
@@ -310,6 +312,14 @@ class FcitxInputMethodService : LifecycleInputMethodService() {
                 handleDeleteSurrounding(before, after)
             }
             is FcitxEvent.IMChangeEvent -> {
+                // Per-app auto-switch: save mapping on user-initiated change
+                if (perAppImeManager.isEnabled && !perAppImeManager.isAutoSwitching) {
+                    val currentPkg = pkgNameCache.forUid(currentInputBinding?.uid ?: -1)
+                    if (currentPkg != null) {
+                        perAppImeManager.onInputMethodChanged(currentPkg, event.data.uniqueName)
+                    }
+                }
+                perAppImeManager.endAutoSwitch()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     val im = event.data.uniqueName
                     val subtype = SubtypeManager.subtypeOf(im) ?: return
@@ -682,6 +692,16 @@ class FcitxInputMethodService : LifecycleInputMethodService() {
         postFcitxJob {
             // ensure InputContext has been created before focusing it
             activate(uid, pkgName)
+        }
+        // Per-app auto-switch: remember the last used input method for this app
+        if (perAppImeManager.isEnabled && pkgName != null) {
+            val savedIme = perAppImeManager.getRememberedIme(pkgName)
+            if (savedIme != null) {
+                perAppImeManager.beginAutoSwitch(savedIme)
+                postFcitxJob {
+                    activateIme(savedIme)
+                }
+            }
         }
         if (firstBindInput) {
             firstBindInput = false

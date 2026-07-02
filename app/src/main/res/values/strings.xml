@@ -326,4 +326,8 @@
     <string name="asrkb_err_start_failed_with_code">Failed to start session (code %1$d)</string>
     <string name="asrkb_err_service_error_with_code">Voice service error (code %1$d)</string>
     <string name="edit_text_playground">EditText Playground</string>
+    <string name="per_app_ime_auto_switch">Auto switch input method per app</string>
+    <string name="per_app_ime_auto_switch_desc">Remember the last used input method for each app and auto-switch when opening it</string>
+    <string name="clear_per_app_ime_mappings">Clear per-app input method mappings</string>
+    <string name="per_app_ime_mappings_cleared">Per-app input method mappings cleared</string>
 </resources>

@@ -1,4 +1,4 @@
-plugins {
+﻿plugins {
     id("org.fcitx.fcitx5.android.app-convention")
     id("org.fcitx.fcitx5.android.native-app-convention")
     id("org.fcitx.fcitx5.android.build-metadata")
@@ -124,7 +124,7 @@ dependencies {
     implementation(libs.splitties.views.dsl.recyclerview)
     implementation(libs.splitties.views.recyclerview)
     implementation(libs.aboutlibraries.core)
-    implementation("com.github.jaygoo:WaveLineView:1.0.0")
+    // implementation("com.github.jaygoo:WaveLineView:1.0.0") // local stub
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
@@ -141,3 +141,4 @@ configurations {
         exclude(group = "com.louiscad.splitties", module = "splitties-systemservices")
     }
 }
+
